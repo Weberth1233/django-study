@@ -59,6 +59,33 @@ class Car(models.Model):
 
     
 # Relacionamento M(muitos) para M(muitos)
+#from polls.models import *
+# >>> ringo = Person.objects.create(name="Ringo Starr")
+# >>> paul = Person.objects.create(name="Paul McCartney")
+# >>> beatles = Group.objects.create(name="The Beatles")
+# >>> m1 = Membership(
+# ...     person=ringo,
+# ...     group=beatles,
+# ...     date_joined=date(1962, 8, 16),
+# ...     invite_reason="Needed a new drummer.",
+# ... )
+# >>> m1.save()
+# >>> beatles.members.all()
+# <QuerySet [<Person: Ringo Starr>]>
+# >>> ringo.group_set.all()
+# <QuerySet [<Group: The Beatles>]>
+# >>> m2 = Membership.objects.create(
+# ...     person=paul,
+# ...     group=beatles,
+# ...     date_joined=date(1960, 8, 1),
+# ...     invite_reason="Wanted to form a band.",
+# ... )
+# >>> beatles.members.all()
+# <QuerySet [<Person: Ringo Starr>, <Person: Paul McCartney>]>
+
+#Outras formas de adicionar no grupo:
+#beatles.members.create(name="George Harrison", through_defaults ={"date_joined": timezone.now()})
+
 class Person(models.Model):
     name = models.CharField(max_length=128)
 
@@ -71,7 +98,7 @@ class Group(models.Model):
     #ManyToManyField usando o argumento through para apontar para o modelo 
     #que atuará como um intermediário.
     members = models.ManyToManyField(Person, through='Membership')
-    
+
     def __str__(self) -> str:
         return self.name
 
