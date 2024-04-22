@@ -22,7 +22,7 @@ class Choice(models.Model):
 
     def __str__(self) -> str:
         return self.choice_text
-
+#-------------------------------------------------------
 class Musican(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -39,8 +39,36 @@ class Album(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name} - {self.release_date} - {self.num_starts} '
-    
+#---------------------------------------------------------
+#Relacionamento 1 para 1
+from django.db import models
 
+class Place(models.Model):
+    name = models.CharField(max_length=50)
+    adress = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f"{self.name} o local"
+    
+class Restaurant(models.Model):
+    #O restaurante está em apenas um local
+    place = models.OneToOneField(
+        Place, on_delete=models.CASCADE,
+        primary_key = True
+    )
+    server_hot_dogs = models.BooleanField(default=False)
+    server_pizza = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '%s O restaurante' % self.place.name
+    
+class Waiter(models.Model):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return "%s O Garçom %s" % (self.name, self.restaurant)
+#---------------------------------------------------------
 #Relacionamento 1 para muitos
 class Manufacturer(models.Model):
     #Criando um campo com o tamanho maximo de 50 e unico(Não podendo se repetir)
@@ -56,36 +84,8 @@ class Car(models.Model):
 
     def __str__(self) -> str:
         return f'{self.company_that_makes_it.name_company, self.name_car}'
-
-    
+#------------------------------------------------------------  
 # Relacionamento M(muitos) para M(muitos)
-#from polls.models import *
-# >>> ringo = Person.objects.create(name="Ringo Starr")
-# >>> paul = Person.objects.create(name="Paul McCartney")
-# >>> beatles = Group.objects.create(name="The Beatles")
-# >>> m1 = Membership(
-# ...     person=ringo,
-# ...     group=beatles,
-# ...     date_joined=date(1962, 8, 16),
-# ...     invite_reason="Needed a new drummer.",
-# ... )
-# >>> m1.save()
-# >>> beatles.members.all()
-# <QuerySet [<Person: Ringo Starr>]>
-# >>> ringo.group_set.all()
-# <QuerySet [<Group: The Beatles>]>
-# >>> m2 = Membership.objects.create(
-# ...     person=paul,
-# ...     group=beatles,
-# ...     date_joined=date(1960, 8, 1),
-# ...     invite_reason="Wanted to form a band.",
-# ... )
-# >>> beatles.members.all()
-# <QuerySet [<Person: Ringo Starr>, <Person: Paul McCartney>]>
-
-#Outras formas de adicionar no grupo:
-#beatles.members.create(name="George Harrison", through_defaults ={"date_joined": timezone.now()})
-
 class Person(models.Model):
     name = models.CharField(max_length=128)
 
