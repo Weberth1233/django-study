@@ -86,11 +86,49 @@ class Car(models.Model):
         return f'{self.company_that_makes_it.name_company, self.name_car}'
 #------------------------------------------------------------  
 # Relacionamento M(muitos) para M(muitos)
+
+#Relacionando entre pessoa e tipo de pessoa
+#Servidor
+#Comissionado
+#Terceirazo
+#Promotor de Justiça
+class Type_Person(models.Model):
+    name_type = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return f'{self.name_type}'
+
 class Person(models.Model):
+    GENRE_PERSON = (
+        ("M", "Masculino"),
+        ("F", "Feminino"),
+        ("O", "Outro"),
+    )
     name = models.CharField(max_length=128)
+    genre_person = models.CharField(max_length=1, choices = GENRE_PERSON, blank=False, null=False)
+    person_type = models.ForeignKey(Type_Person, on_delete= models.CASCADE)
 
     def __str__(self) -> str:
-        return self.name
+        return f'Nome: {self.name} - Sexo: {self.genre_person} - Cargo: {self.person_type.name_type}'
+    
+    @classmethod
+    def getPerson(cls):
+        person = Person.objects.filter(name__startswith="Web")
+        if person.query.is_empty:
+            return 'N/A'
+        return person
+    
+    @classmethod
+    def getListPerson(cls):
+        person_list = Person.objects.all()
+        if person_list.count() == 0:
+            print('Lista está vazia')
+            
+        else: 
+            my_list_person = []
+            for person in person_list:
+                my_list_person.append(person)
+            return my_list_person
 
 class Group(models.Model):
     name = models.CharField(max_length=128)
